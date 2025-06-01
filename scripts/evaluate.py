@@ -1,49 +1,51 @@
+# scripts/evaluate.py
 import json
 from pycocotools.coco import COCO
 from pycocotools.cocoeval import COCOeval
 import pandas as pd
-import os
 import argparse
 
-def evaluate_predictions(gt_json, pred_json, output_csv):
-    """Evaluate predictions and save per-class metrics."""
-    coco_gt = COCO(gt_json)
-    coco_dt = coco_gt.loadRes(pred_json)
+def evaluate_predictions(gt_file, pred_file, output_csv):
+    # Load ground truth and predictions
+    coco_gt = COCO(gt_file)
+    with open(pred_file, 'r') as f:
+        coco_dt = coco_gt.loadRes(json.load(f))
     
-    coco_eval = COCOeval(coco_gt, coco_dt, 'bbox')
+    # Initialize evaluation
+    coco_eval = COCOeval(coco_gt, coco_dt, iouType='bbox')
     coco_eval.evaluate()
     coco_eval.accumulate()
     coco_eval.summarize()
     
-    class_names = [
-        'Basketball Field', 'Building', 'Crosswalk', 'Football Field', 'Graveyard',
-        'Large Vehicle', 'Medium Vehicle', 'Playground', 'Roundabout', 'Ship',
-        'Small Vehicle', 'Swimming Pool', 'Tennis Court', 'Train'
-    ]
-    metrics = {'Class': [], 'AP@50': [], 'AR@50': []}
-    
+    # Extract per-class AP
+    class_aps = {}
     for i, cat_id in enumerate(coco_gt.getCatIds()):
         coco_eval.params.catIds = [cat_id]
         coco_eval.evaluate()
         coco_eval.accumulate()
         coco_eval.summarize()
-        ap = coco_eval.stats[1]
-        ar = coco_eval.stats[8]
-        metrics['Class'].append(class_names[i])
-        metrics['AP@50'].append(ap)
-        metrics['AR@50'].append(ar)
+        ap = coco_eval.stats[0]  # mAP@50
+        class_aps[coco_gt.cats[cat_id]['name']] = ap
     
-    os.makedirs(os.path.dirname(output_csv), exist_ok=True)
-    df = pd.DataFrame(metrics)
-    df.to_csv(output_csv, index=False)
+    # Save metrics to CSV
+    metrics_df = pd.DataFrame({
+        'Class': list(class_aps.keys()),
+        'AP@50': list(class_aps.values())
+    })
+    metrics_df.to_csv(output_csv, index=False)
     print(f"Metrics saved to {output_csv}")
-    return df
+    
+    # Print overall mAP@50
+    print(f"Overall mAP@50: {coco_eval.stats[0]:.2f}")
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--gt_json', type=str, default='/kaggle/input/cadot-paris/CADOT_Dataset/valid/_annotations.coco.json', help='Ground truth COCO JSON')
-    parser.add_argument('--pred_json', type=str, default='/kaggle/working/results/predictions.json', help='Predictions COCO JSON')
-    parser.add_argument('--output_csv', type=str, default='/kaggle/working/results/metrics.csv', help='Output CSV')
+    parser = argparse.ArgumentParser(description='Evaluate CADOT predictions')
+    parser.add_argument('--gt_file', type=str, default='/kaggle/input/cadot-paris/CADOT_Dataset/test/annotations.json',
+                        help='Path to ground truth annotations')
+    parser.add_argument('--pred_file', type=str, default='/kaggle/working/results/predictions.json',
+                        help='Path to predictions JSON')
+    parser.add_argument('--output_csv', type=str, default='/kaggle/working/results/metrics.csv',
+                        help='Output CSV for metrics')
     args = parser.parse_args()
     
-    evaluate_predictions(args.gt_json, args.pred_json, args.output_csv)
+    evaluate_predictions(args.gt_file, args.pred_file, args.output_csv)
