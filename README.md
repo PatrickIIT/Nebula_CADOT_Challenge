@@ -11,8 +11,9 @@ YOLOv5m-based solution for the IEEE ICIP 2025 CADOT Challenge, using copy-paste 
 - CUDA: 11.8
 - Dependencies: `requirements.txt`
 
-## Installation
+## Setup
 ```bash
-git clone https://github.com/PatrickIIT/Nebula_CADOT_Challenge
-cd Nebula_CADOT_Challenge
-pip install -r requirements.txt
+!git clone https://github.com/ultralytics/yolov5.git
+%cd yolov5
+!pip install -r requirements.txt
+!pip install torch==2.1.0 pycocotools==2.0.7 pandas==2.2.2 numpy==1.26.4 opencv-python==4.10.0.84
