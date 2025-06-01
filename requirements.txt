@@ -1,10 +1,10 @@
+echo "ultralytics==8.3.146
+pycocotools==2.0.7
+opencv-python==4.10.0.84
+matplotlib==3.7.2
+numpy==1.26.4
 torch==2.1.0
 torchvision==0.16.0
-numpy==1.26.4
-opencv-python==4.10.0.84
-pandas==2.2.2
-seaborn==0.12.2
-matplotlib==3.7.2
 PyYAML==6.0.2
-scipy==1.15.2
 tqdm==4.67.1
+pandas==2.2.2" > /kaggle/working/requirements.txt
