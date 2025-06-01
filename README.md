@@ -15,5 +15,17 @@ This repository contains our solution for the IEEE ICIP 2025 CADOT Challenge, de
 - **Python**: 3.11
 - **Dependencies**: See `requirements.txt`
 
+
+
+## Results
+- YOLOv11n: mAP50 = [NEW_mAP50] (use the former weight and train for more 10 epochs, CPU)
+- YOLOv5x: mAP50 = 0.03 (trained for 8 epochs)
+- Test score: mAP50 = [NEW_TEST_mAP50]
+- See `reports/report.pdf`.
+
+## Submission
+- Submit `/kaggle/working/submission_new.json` to CADOTools.
+- Repository: https://github.com/PatrickIIT/Nebula_CADOT_Challenge
+
 ```bash
 pip install -r requirements.txt
