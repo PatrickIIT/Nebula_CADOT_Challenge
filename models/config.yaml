@@ -1,0 +1,7 @@
+lr: 0.01
+batch_size: 16
+epochs: 20
+img_size: 640
+augment: true
+focal_loss: true
+copy_paste: 0.5
