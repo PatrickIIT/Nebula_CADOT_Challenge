@@ -41,14 +41,14 @@ def evaluate_predictions(gt_file, pred_file, output_csv):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Evaluate CADOT predictions')
-    parser.add_argument('--gt_file', type=str, default='/kaggle/input/cadot-paris/CADOT_Dataset/test/annotations.json',
+    parser.add_argument('--gt_file', type=str, default='/kaggle/input/cadot-paris/CADOT_Dataset/valid/_annotations.coco.json',
                         help='Path to ground truth annotations')
-    parser.add_argument('--pred_file', type=str, default='/kaggle/working/results/predictions.json',
+    parser.add_argument('--pred_file', type=str, default='/kaggle/working/results/val_predictions.json',
                         help='Path to predictions JSON')
-    parser.add_argument('--output_csv', type=str, default='/kaggle/working/results/metrics.csv',
+    parser.add_argument('--output_csv', type=str, default='/kaggle/working/results/val_metrics.csv',
                         help='Output CSV for metrics')
     
     # Parse arguments, ignoring unknown ones
-    args, _ = parser.parse_known_args()  # Ignore unrecognized arguments
+    args, _ = parser.parse_known_args()
     
     evaluate_predictions(args.gt_file, args.pred_file, args.output_csv)
